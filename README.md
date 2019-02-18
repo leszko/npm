@@ -21,4 +21,6 @@ To run both unit and acceptance tests use the following command.
 
 ## Continuous Integration
 
-<https://travis-ci.org/leszko/npm> [![Build Status](https://travis-ci.org/leszko/npm.svg?branch=master)](https://travis-ci.org/leszko/npm)
+<https://travis-ci.org/leszko/npm>
+
+[![Build Status](https://travis-ci.org/leszko/npm.svg?branch=master)](https://travis-ci.org/leszko/npm)
