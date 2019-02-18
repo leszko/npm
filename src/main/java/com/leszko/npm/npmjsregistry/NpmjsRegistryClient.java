@@ -35,7 +35,6 @@ public class NpmjsRegistryClient
     }
 
     private List<PackageDefinition> provideSync(PackageDefinition definition) {
-        System.out.println("provide sync: " + definition);
         String url = String.format("%s/%s/%s", npmjsUrl, definition.getName(), definition.getVersion());
         NpmjsRegistryResponse response = restTemplate.getForObject(url, NpmjsRegistryResponse.class);
         return extractPackageDefinitions(response);
