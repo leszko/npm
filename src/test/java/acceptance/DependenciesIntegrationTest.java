@@ -118,7 +118,7 @@ public class DependenciesIntegrationTest {
                 + "      \"version\": \"1.2.3\",\n"
                 + "      \"dependencies\": [\n"
                 + "        {\n"
-                + "          \"name\": \"grandchilda\",\n"
+                + "          \"name\": \"grandchild\",\n"
                 + "          \"version\": \"4.5.6\"\n"
                 + "        }\n"
                 + "      ]\n"
