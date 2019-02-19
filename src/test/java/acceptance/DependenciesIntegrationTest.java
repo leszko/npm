@@ -3,6 +3,7 @@ package acceptance;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.leszko.npm.Application;
+import com.leszko.npm.cache.CachingDirectDependenciesProvider;
 import com.leszko.npm.domain.DirectDependenciesProvider;
 import com.leszko.npm.npmjsregistry.NpmjsRegistryClient;
 import org.junit.Before;
@@ -20,9 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.cache.CacheManager;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -65,15 +70,6 @@ public class DependenciesIntegrationTest {
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(content().json(expectedResult()));
-
-    }
-
-    private static void stub(String packageName, String packageVersion, String response) {
-        stubFor(WireMock.get(urlEqualTo(String.format("/%s/%s", packageName, packageVersion)))
-                        .willReturn(aResponse()
-                                .withHeader("Content-Type", "application/json")
-                                .withStatus(200)
-                                .withBody(response)));
     }
 
     private static String parentResponse() {
@@ -127,10 +123,40 @@ public class DependenciesIntegrationTest {
                 + "}";
     }
 
+    @Test
+    public void dependenciesCached()
+            throws Exception {
+        // given
+        String packageName = "package";
+        String packageVersion = "1.0.0";
+        String response = "{\n"
+                + "  \"name\": \"package\",\n"
+                + "  \"version\": \"1.0.0\",\n"
+                + "  \"dependencies\": {}\n"
+                + "}";
+        stub(packageName, packageVersion, response);
+        String url = String.format("/%s/%s", packageName, packageVersion);
+
+        // when
+        this.mockMvc.perform(get(url)).andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(get(url)).andDo(print()).andExpect(status().isOk());
+
+        // then
+        verify(1, getRequestedFor(urlEqualTo(url)));
+    }
+
+    private static void stub(String packageName, String packageVersion, String response) {
+        stubFor(WireMock.get(urlEqualTo(String.format("/%s/%s", packageName, packageVersion)))
+                        .willReturn(aResponse()
+                                .withHeader("Content-Type", "application/json")
+                                .withStatus(200)
+                                .withBody(response)));
+    }
+
     @Bean
-    DirectDependenciesProvider dependenciesProvider() {
+    DirectDependenciesProvider dependenciesProvider(CacheManager cacheManager) {
         String url = String.format("http://localhost:%d", WIREMOCK_PORT);
-        return new NpmjsRegistryClient(new RestTemplateBuilder(), url);
+        return new CachingDirectDependenciesProvider(new NpmjsRegistryClient(new RestTemplateBuilder(), url), cacheManager);
     }
 
 }

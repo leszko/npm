@@ -17,6 +17,8 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.6'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.hazelcast:hazelcast:3.11'
+    implementation 'javax.cache:cache-api:1.1.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation("junit:junit")
