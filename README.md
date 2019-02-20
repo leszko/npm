@@ -1,11 +1,8 @@
-# NPM
+# NPM Analyzer
 
 Web Service to resolve NPM dependencies.
 
-## How to run?
-
-1. Clone the repository
-2. Run the application
+## Quick Start
 
 ```
 ./gradlew bootRun
@@ -13,7 +10,7 @@ Web Service to resolve NPM dependencies.
 
 ## Running tests
 
-To run both unit and acceptance tests use the following command.
+To run both unit and acceptance tests use the following command:
 
 ```
 ./gradlew check
@@ -27,18 +24,18 @@ To run both unit and acceptance tests use the following command.
 
 ## Features Summary
 
-* Retrieving the dependency tree using the external service (npmjs.com)[npmjs.com]
-* Caching of the already fetched packages
-* Asynchronous execution of the external service REST calls
-* Scalability of the web service (together with the shared scalable cache provided by Hazelcast)
-* Monitoring and Management provided by the standard Spring Boot Actuator
+* Retrieving the dependency tree using an external service ([npmjs.com](npmjs.com))
+* Caching of external service calls
+* Asynchronous execution external service calls
+* Scalability (together with the distributed caching layer provided by Hazelcast)
+* Monitoring and management provided by the standard Spring Boot Actuator
 
 ## Further Improvements
 
-* Better dependency version resolution (to cover all scenarios from [here](<https://docs.npmjs.com/files/package.json#dependencies))
-* NPM package cycle detection
-* Error handling (to not expose the internal exceptions and return the proper HTTP error codes and messages)
-* Retries for the external service calls
-* Metrics to the monitoring
-* Model for cache entries and the custom serialization (to enable rolling upgrade without loosing cache values)
+* Better dependency version resolution (to cover all scenarios from [here](https://docs.npmjs.com/files/package.json#dependencies))
+* Cycle dependencies detection
+* Error handling (to not expose internal exceptions and return HTTP error codes and messages)
+* Retries for external service calls
+* Metrics for better monitoring
+* Dedicated model for the caching layer (to enable rolling upgrade without loosing cache values)
 * Cache persistence
